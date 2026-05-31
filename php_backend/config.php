@@ -12,16 +12,15 @@ $allowed_origins = [
     "http://localhost:3000",            // React dev (CRA)
     "http://localhost:5173",            // Vite dev server
     "http://localhost:8788",            // Cloudflare Wrangler local
-    // "https://YOUR-APP.pages.dev",   // TODO: Replace with your Cloudflare URL after deploy
-    // "https://yourdomain.com",       // TODO: Replace with your custom domain if you have one
+    "https://eduvix.pages.dev",         // Your Cloudflare Pages URL
 ];
 
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 if (in_array($origin, $allowed_origins)) {
     header("Access-Control-Allow-Origin: $origin");
 } else {
-    // Fallback — allows all during development. REMOVE the line below after going live.
-    header("Access-Control-Allow-Origin: *");
+    // If the origin is not explicitly allowed, default to the production site or don't set it for security
+    header("Access-Control-Allow-Origin: https://eduvix.pages.dev");
 }
 
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
