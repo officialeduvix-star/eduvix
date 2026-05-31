@@ -39,13 +39,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     exit();
 }
 
-$db_host = "sql213.infinityfree.com";
-$db_user = "if0_42052077"; // Default XAMPP user
-$db_pass = "Pu43QIZkYKp";     // Default XAMPP password is empty
-$db_name = "if0_42052077_focus_forge";
+$is_local = in_array($_SERVER['REMOTE_ADDR'] ?? '', ['127.0.0.1', '::1']) 
+         || in_array($_SERVER['SERVER_NAME'] ?? '', ['localhost', '127.0.0.1'])
+         || (isset($_SERVER['HTTP_HOST']) && strpos($_SERVER['HTTP_HOST'], 'localhost') !== false);
 
-// Create Connection
-$conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
+if ($is_local) {
+    // Local XAMPP settings
+    $db_host = "localhost";
+    $db_user = "root";
+    $db_pass = "";
+    $db_name = "if0_42052077_focus_forge"; // Try your local DB name
+    
+    // Create Connection gracefully
+    $conn = @new mysqli($db_host, $db_user, $db_pass, $db_name);
+    
+    // If local connection fails, fallback to a standard "focus_forge" database name
+    if ($conn->connect_error) {
+        $db_name = "focus_forge";
+        $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
+    }
+} else {
+    // Production InfinityFree settings
+    $db_host = "sql213.infinityfree.com";
+    $db_user = "if0_42052077";
+    $db_pass = "Pu43QIZkYKp";
+    $db_name = "if0_42052077_focus_forge";
+    
+    $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
+}
 
 // Check Connection
 if ($conn->connect_error) {
