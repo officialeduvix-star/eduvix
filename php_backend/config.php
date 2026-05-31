@@ -16,7 +16,15 @@ $allowed_origins = [
 ];
 
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+$is_allowed = false;
+
 if (in_array($origin, $allowed_origins)) {
+    $is_allowed = true;
+} elseif (preg_match('/^https:\/\/[a-z0-9.-]+\.pages\.dev$/i', $origin) || preg_match('/^https:\/\/[a-z0-9.-]+\.workers\.dev$/i', $origin)) {
+    $is_allowed = true;
+}
+
+if ($is_allowed) {
     header("Access-Control-Allow-Origin: $origin");
 } else {
     // If the origin is not explicitly allowed, default to the production site or don't set it for security
