@@ -3,8 +3,27 @@
 error_reporting(0);
 ini_set('display_errors', 0);
 // config.php
-// CORS Headers for React Frontend
-header("Access-Control-Allow-Origin: *");
+
+// =============================================
+// CORS — Allowed Origins
+// Add your Cloudflare URL below after deploying
+// =============================================
+$allowed_origins = [
+    "http://localhost:3000",            // React dev (CRA)
+    "http://localhost:5173",            // Vite dev server
+    "http://localhost:8788",            // Cloudflare Wrangler local
+    // "https://YOUR-APP.pages.dev",   // TODO: Replace with your Cloudflare URL after deploy
+    // "https://yourdomain.com",       // TODO: Replace with your custom domain if you have one
+];
+
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+if (in_array($origin, $allowed_origins)) {
+    header("Access-Control-Allow-Origin: $origin");
+} else {
+    // Fallback — allows all during development. REMOVE the line below after going live.
+    header("Access-Control-Allow-Origin: *");
+}
+
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
@@ -27,7 +46,7 @@ if ($conn->connect_error) {
 }
 
 // Function to send JSON response
-function sendResponse($success, $message, $data = null) {
+function sendResponse(bool $success, string $message, $data = null): void {
     echo json_encode([
         "success" => $success,
         "message" => $message,

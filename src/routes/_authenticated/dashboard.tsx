@@ -5,7 +5,7 @@ import { Calendar, ClipboardList, Flame, Target, ArrowRight, BookOpen, Trophy, I
 import { useAuth } from "@/hooks/use-auth";
 import { API_BASE } from "@/lib/api";
 import { PomodoroTimer } from "@/components/pomodoro-timer";
-import { prepareUserData } from "@/lib/prepare-user-data";
+
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — Eduvix" }] }),
@@ -314,7 +314,7 @@ function LiveActivity({ blocks, subjects }: { blocks: any[], subjects: any[] }) 
             <div className="flex items-center gap-2 mt-1 justify-end">
               <div className="h-1.5 w-32 bg-secondary rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-[image:var(--gradient-primary)]"
+                  className="h-full bg-gradient-to-r from-primary to-primary/70"
                   style={{ width: `${progress}%` }}
                 />
               </div>
@@ -519,7 +519,7 @@ function LiveActivity({ blocks, subjects }: { blocks: any[], subjects: any[] }) 
                 <h3 className="font-bold text-primary mb-3 flex items-center gap-2 border-b border-border/40 pb-2 uppercase tracking-widest text-xs">
                   <Trophy className="h-4 w-4 text-[#FFD700]" /> Rank Progression
                 </h3>
-                <div className="max-h-[260px] overflow-y-auto space-y-2 pr-2 border border-border/40 rounded-xl p-2 bg-secondary/5">
+                <div className="max-h-64 overflow-y-auto space-y-2 pr-2 border border-border/40 rounded-xl p-2 bg-secondary/5">
                   {[
                     { lvl: "1", name: "Rookie", col: "#94A3B8" },
                     { lvl: "2", name: "Beginner", col: "#94A3B8" },

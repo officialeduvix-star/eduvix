@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
   exit();
 }
 
-function calculateUserXP($userId, $conn) {
+function calculateUserXP(int $userId, mysqli $conn): int {
     $xp = 0;
 
     // 1. Attendance (+10 XP per attended, -10 XP per missed)
@@ -57,7 +57,7 @@ function calculateUserXP($userId, $conn) {
     return max(0, $xp);
 }
 
-function getRankInfo($xp) {
+function getRankInfo(int $xp): array {
     // Level Calculation: XP = 100 * (Level-1)^1.5  =>  Level = (XP/100)^(1/1.5) + 1
     $level = floor(pow($xp / 100, 1 / 1.5)) + 1;
     
@@ -151,7 +151,7 @@ function ok($data = null) {
   echo json_encode(['success' => true, 'data' => $data]);
   exit();
 }
-function err($message, $status = 400, $data = null) {
+function err(string $message, int $status = 400, $data = null): never {
   http_response_code($status);
   echo json_encode(['success' => false, 'message' => $message, 'data' => $data]);
   exit();
@@ -961,6 +961,7 @@ switch ($action) {
     }
     $stmt->close();
 
+    $users = [];
     foreach ($dbUsers as $row) {
       $uId = $row['id'];
       $row['xp'] = calculateUserXP($uId, $conn);
