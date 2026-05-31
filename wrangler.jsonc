@@ -6,7 +6,7 @@
   "main": "src/server.ts",
   "vars": {
     "GEMINI_API_KEY": "AIzaSyBxBWhE_D6qxnCCFeiv5v_kcve50hITMHw",
-    "VITE_PHP_API_URL": "https://eduvix.infinityfreeapp.com/api/api.php",
-    "VITE_PHP_AUTH_URL": "https://eduvix.infinityfreeapp.com/api/auth.php"
+    "VITE_PHP_API_URL": "https://eduvix.infinityfreeapp.com/php_backend/api.php",
+    "VITE_PHP_AUTH_URL": "https://eduvix.infinityfreeapp.com/php_backend/auth.php"
   }
 }
