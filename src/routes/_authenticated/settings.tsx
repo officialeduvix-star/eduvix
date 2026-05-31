@@ -130,7 +130,7 @@ function GenderButton({
   );
 }
 
-export default function SettingsPage() {
+function SettingsPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
 

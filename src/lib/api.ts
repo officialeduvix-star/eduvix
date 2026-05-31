@@ -1,4 +1,4 @@
-export const API_BASE = "http://eduvix.infinityfree.me/api/api.php";
+export const API_BASE = "http://localhost/focus-forge-os-main/php_backend/api.php";
 
 export const getAuthHeaders = () => {
   const token = localStorage.getItem("ff_token");

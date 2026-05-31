@@ -1,4 +1,7 @@
 <?php
+// Suppress PHP warnings/notices so they never corrupt JSON output
+error_reporting(0);
+ini_set('display_errors', 0);
 // config.php
 // CORS Headers for React Frontend
 header("Access-Control-Allow-Origin: *");
