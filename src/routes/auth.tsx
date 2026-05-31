@@ -104,6 +104,30 @@ function AuthPage() {
 
   const otpEmail = (email).trim();
 
+  const handleOtpChange = (val: string, index: number) => {
+    const newVal = val.replace(/[^0-9]/g, "");
+    const newInputs = [...otpInputs];
+    newInputs[index] = newVal;
+    setOtpInputs(newInputs);
+
+    // Auto-focus next box
+    if (newVal && index < 5) {
+      const nextInput = document.querySelector(`input[data-otp-index='${index + 1}']`) as HTMLInputElement;
+      nextInput?.focus();
+    }
+  };
+
+  const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+    if (e.key === "Backspace" && !otpInputs[index] && index > 0) {
+      const prevInput = document.querySelector(`input[data-otp-index='${index - 1}']`) as HTMLInputElement;
+      prevInput?.focus();
+      // Also clear the prev input's value
+      const newInputs = [...otpInputs];
+      newInputs[index - 1] = "";
+      setOtpInputs(newInputs);
+    }
+  };
+
 
   // single source of truth for OTP verification: Exam Email (or fallback Email)
 
@@ -374,80 +398,90 @@ function AuthPage() {
 
                 </div>
 
-              )}      {/* Render OTP flow for signup and forgot */}
-      { (mode === "signup" || mode === "forgot") && (
-        <div className="space-y-3 p-3 border border-border rounded-lg bg-surface-elevated/20">
-          <div className="space-y-2">
-            {otpSent && !emailVerified && (
-              <div className="flex gap-2 justify-center">
-                {otpInputs.map((val, i) => (
-                  <input
-                    key={i}
-                    type="text"
-                    maxLength={1}
-                    className="w-10 text-center text-xl border border-border rounded-lg bg-surface-elevated/40 focus:outline-none focus:ring-2 focus:ring-primary/40"
-                    value={val}
-                    onChange={(e) => {
-                      const newVal = e.target.value.replace(/[^0-9]/g, "");
-                      const newInputs = [...otpInputs];
-                      newInputs[i] = newVal;
-                      setOtpInputs(newInputs);
-                      if (newVal && i < 5) {
-                        const next = document.querySelector(`input[data-index='${i + 1}']`) as HTMLInputElement;
-                        next?.focus();
-                      }
-                    }}
-                    data-index={i}
-                  />
-                ))}
-                <button
-                  type="button"
-                  onClick={handleVerifyOtp}
-                  disabled={busy || otpInputs.some(v => v === "")}
-                  className="rounded-lg bg-(image:--gradient-primary) text-primary-foreground px-3 py-1.5 text-sm font-medium hover:scale-[1.02] disabled:opacity-50 transition"
-                >
-                  Verify
-                </button>
-              </div>
-            )}
+              )}
 
-            {emailVerified && (
-              <p className="text-xs text-green-500 flex items-center gap-1 mt-1 font-medium">
-                <CheckCircle2 className="h-4 w-4" /> Email verified
-              </p>
-            )}
-          </div>
-        </div>
-      )}
-{mode === "forgot" ? (
-  <div className="flex items-center gap-2">
-    <Field
-      icon={<Mail className="h-4 w-4" />}
-      type="email"
-      placeholder="Email"
-      value={email}
-      onChange={setEmail}
-      required
-    />
-    <button
-      type="button"
-      onClick={handleSendOtp}
-      disabled={busy || otpSent || !email}
-      className="rounded-lg bg-(image:--gradient-primary) text-primary-foreground px-3 py-1.5 text-sm font-medium hover:scale-[1.02] disabled:opacity-0 transition"
-    >
-      {otpSent ? "OTP Sent" : "Verify"}
-    </button>
-  </div>
-) : (
-  <Field
-    icon={<Mail className="h-4 w-4" />}
-    type="email"
-    placeholder="Email"
-    value={email}
-    onChange={setEmail}
-    required
-  />
-)}
+              {/* Email & OTP verification flow for signup and forgot */}
+              {(mode === "signup" || mode === "forgot") ? (
+                <div className="space-y-3">
+                  <div className="flex gap-2">
+                    <Field
+                      icon={<Mail className="h-4 w-4" />}
+                      type="email"
+                      placeholder="Email"
+                      value={email}
+                      onChange={setEmail}
+                      required
+                      disabled={emailVerified}
+                    />
+                    {!emailVerified && (
+                      <button
+                        type="button"
+                        onClick={handleSendOtp}
+                        disabled={busy || !email}
+                        className="rounded-lg bg-gradient-to-r from-primary to-primary/80 hover:from-primary/95 hover:to-primary text-primary-foreground px-4 text-xs font-semibold shadow-sm hover:scale-[1.02] active:scale-[0.98] transition disabled:opacity-50 disabled:scale-100 flex items-center justify-center min-w-[90px]"
+                      >
+                        {busy && !otpSent ? (
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                        ) : otpSent ? (
+                          "Resend OTP"
+                        ) : (
+                          "Verify"
+                        )}
+                      </button>
+                    )}
+                  </div>
+
+                  {otpSent && !emailVerified && (
+                    <div className="space-y-2 mt-2 p-3 border border-border/40 rounded-xl bg-secondary/5 backdrop-blur-sm animate-in fade-in slide-in-from-top-2 duration-300">
+                      <p className="text-xs text-muted-foreground font-medium text-center">
+                        Enter the 6-digit code sent to your email
+                      </p>
+                      <div className="flex gap-2 items-center justify-between">
+                        <div className="flex gap-2 justify-center mx-auto">
+                          {otpInputs.map((val, i) => (
+                            <input
+                              key={i}
+                              type="text"
+                              maxLength={1}
+                              data-otp-index={i}
+                              pattern="[0-9]*"
+                              inputMode="numeric"
+                              className="w-10 h-10 text-center text-lg font-bold border border-border/60 rounded-xl bg-surface-elevated/40 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200"
+                              value={val}
+                              onChange={(e) => handleOtpChange(e.target.value, i)}
+                              onKeyDown={(e) => handleOtpKeyDown(e, i)}
+                            />
+                          ))}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleVerifyOtp}
+                          disabled={busy || otpInputs.some((v) => v === "")}
+                          className="rounded-lg bg-gradient-to-r from-primary to-primary/80 hover:from-primary/95 hover:to-primary text-primary-foreground px-4 h-10 text-xs font-semibold shadow-sm hover:scale-[1.02] active:scale-[0.98] transition disabled:opacity-50 disabled:scale-100 flex items-center justify-center"
+                        >
+                          {busy ? <Loader2 className="h-3 w-3 animate-spin" /> : "Verify OTP"}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {emailVerified && (
+                    <div className="mt-2 p-3 border border-green-500/20 bg-green-500/5 rounded-xl flex items-center gap-2 text-green-500 text-xs font-semibold animate-in zoom-in-95 duration-200">
+                      <CheckCircle2 className="h-4 w-4 text-green-500" />
+                      <span>Email verified successfully! You can now proceed.</span>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Field
+                  icon={<Mail className="h-4 w-4" />}
+                  type="email"
+                  placeholder="Email"
+                  value={email}
+                  onChange={setEmail}
+                  required
+                />
+              )}
 
               {/* Show password field only after email is verified for forgot mode */}
               {/* Password field for signin */}
@@ -518,6 +552,7 @@ function AuthPage() {
                   setEmailVerified(false);
                   setOtpSent(false);
                   setOtp("");
+                  setOtpInputs(Array(6).fill(""));
                   setBusy(false);
                 }}
                 className="text-primary font-medium hover:underline"
@@ -529,7 +564,14 @@ function AuthPage() {
                 <div className="mt-2">
                   <button
                     type="button"
-                    onClick={() => setMode("forgot")}
+                    onClick={() => {
+                      setMode("forgot");
+                      setEmailVerified(false);
+                      setOtpSent(false);
+                      setOtp("");
+                      setOtpInputs(Array(6).fill(""));
+                      setBusy(false);
+                    }}
                     className="text-primary font-medium hover:underline"
                   >
                     Forgot password?
