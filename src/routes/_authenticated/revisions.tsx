@@ -4,7 +4,7 @@ import { CheckCircle2, Trash2, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 
 import { useAuth } from '@/hooks/use-auth';
-const API_BASE = 'http://localhost/focus-forge-os-main/php_backend/api.php';
+const API_BASE = import.meta.env.VITE_PHP_API_URL || "http://localhost/focus-forge-os-main/php_backend/api.php";
 
 export const Route = createFileRoute("/_authenticated/revisions")({
   head: () => ({ meta: [{ title: "Revision Queue — Eduvix" }] }),

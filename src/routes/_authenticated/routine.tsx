@@ -5,7 +5,7 @@ import { Plus, X, Coffee, BookOpen, Trash2, Clock, Activity, Wand2 } from "lucid
 import { toast } from "sonner";
 
 import { useAuth } from '@/hooks/use-auth';
-const API_BASE = 'http://localhost/focus-forge-os-main/php_backend/api.php';
+const API_BASE = import.meta.env.VITE_PHP_API_URL || "http://localhost/focus-forge-os-main/php_backend/api.php";
 
 export const Route = createFileRoute("/_authenticated/routine")({
   head: () => ({ meta: [{ title: "Routine Planner — Eduvix" }] }),

@@ -5,7 +5,7 @@ import { Flame, Plus, Trash2, Check } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts";
 
 import { useAuth } from '@/hooks/use-auth';
-const API_BASE = 'http://localhost/focus-forge-os-main/php_backend/api.php';
+const API_BASE = import.meta.env.VITE_PHP_API_URL || "http://localhost/focus-forge-os-main/php_backend/api.php";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/habits")({

@@ -70,8 +70,9 @@ function getUserIdFromToken(request: Request): string | null {
 
 async function saveCoachMessage(authHeader: string | null, role: "user" | "assistant", content: string) {
   try {
-    const phpApiUrl = "http://localhost/focus-forge-os-main/php_backend/api.php?action=addCoachMessage";
-    logDebug(`Saving coach message (${role}) via PHP API...`);
+    const baseApi = getEnvKey("VITE_PHP_API_URL") || "http://localhost/focus-forge-os-main/php_backend/api.php";
+    const phpApiUrl = `${baseApi}?action=addCoachMessage`;
+    logDebug(`Saving coach message (${role}) via PHP API: ${phpApiUrl}...`);
     const res = await fetch(phpApiUrl, {
       method: "POST",
       headers: {
@@ -93,7 +94,8 @@ async function saveCoachMessage(authHeader: string | null, role: "user" | "assis
 async function getUserDisplayName(authHeader: string | null, fallbackId: string): Promise<string> {
   if (!authHeader) return fallbackId;
   try {
-    const phpApiUrl = "http://localhost/focus-forge-os-main/php_backend/api.php?action=getProfile";
+    const baseApi = getEnvKey("VITE_PHP_API_URL") || "http://localhost/focus-forge-os-main/php_backend/api.php";
+    const phpApiUrl = `${baseApi}?action=getProfile`;
     const res = await fetch(phpApiUrl, {
       method: "GET",
       headers: {

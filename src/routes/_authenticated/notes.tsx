@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { BookOpen, Plus, Pin, PinOff, Trash2, Search } from "lucide-react";
 
 import { useAuth } from '@/hooks/use-auth';
-const API_BASE = 'http://localhost/focus-forge-os-main/php_backend/api.php';
+const API_BASE = import.meta.env.VITE_PHP_API_URL || "http://localhost/focus-forge-os-main/php_backend/api.php";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/notes")({

@@ -27,7 +27,7 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
-const API_BASE = "http://localhost/focus-forge-os-main/php_backend/auth.php";
+const API_BASE = import.meta.env.VITE_PHP_AUTH_URL || "http://localhost/focus-forge-os-main/php_backend/auth.php";
 
 function AuthPage() {
   const navigate = useNavigate();
